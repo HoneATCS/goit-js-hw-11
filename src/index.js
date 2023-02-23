@@ -3,7 +3,7 @@ import getImages from './js/script';
 import NewsApiService from './js/script';
 import { Axios } from 'axios';
 import GetApi from './js/script';
-import LoadBtn from './js/Loadbtn';
+import LoadBtn from './js/loadbtn';
 import { appendToGallery, clearGallery, createMarkup } from './js/render';
 
 
