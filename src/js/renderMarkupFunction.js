@@ -1,4 +1,5 @@
-import { refs } from './refs';
+import { refs } from "./refs";
+
 
 export function createMarkup(images) {
   return images
