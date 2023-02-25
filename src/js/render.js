@@ -1,39 +1,46 @@
-import { refs } from "..";
+import { refs } from './refs';
     
 
-export function createMarkup({
-  webformatURL,
-  tags,
-  likes,
-  views,
-  comments,
-  downloads,
-}) {
-  return `
-    <div class="photo-card">
-  <img src="${webformatURL}" alt="${tags}" loading="lazy" width="250px" />
-  <div class="info">
-    <p class="info-item">
-      <b>Likes: ${likes}</b>
-    </p>
-    <p class="info-item">
-      <b>Views: ${views}</b>
-    </p>
-    <p class="info-item">
-      <b>Comments: ${comments}</b>
-    </p>
-    <p class="info-item">
-      <b>Downloads: ${downloads}</b>
-    </p>
-  </div>
-</div>
-    `;
+
+function createMarkup(images) {
+  return images
+    .map(
+      ({
+        webformatURL,
+        largeImageURL,
+        tags,
+        likes,
+        views,
+        comments,
+        downloads,
+      }) => `<div class="photo-card">
+      <a href="${largeImageURL}">
+      <img class="gallery__image" src="${webformatURL}" alt="${tags}" loading="lazy" />
+    </a>
+      <div class="info">
+        <p class="info-item">
+          <b>Likes</b>${likes}
+        </p>
+        <p class="info-item">
+          <b>Views</b>${views}
+        </p>
+        <p class="info-item">
+          <b>Comments</b>${comments}
+        </p>
+        <p class="info-item">
+          <b>Downloads</b>${downloads}
+        </p>
+      </div>
+    </div>
+      `
+    )
+    .join('');
 }
 
-export function appendToGallery(markup) {
-  refs.gallery.insertAdjacentHTML('beforeend', markup);
+export function renderGalleryMarkup(images) {
+  refs.galleryBox.insertAdjacentHTML('beforeend', createMarkup(images));
 }
 
-export function clearGallery() {
-  refs.gallery.innerHTML = '';
+export function clearImagesFromGallery() {
+  refs.galleryBox.innerHTML = '';
 }

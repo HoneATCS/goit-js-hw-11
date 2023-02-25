@@ -1,75 +1,95 @@
-const { Notify } = require("notiflix");
-import getImages from './js/script';
-import NewsApiService from './js/script';
-import { Axios } from 'axios';
-import GetApi from './js/script';
-import LoadBtn from './js/loadbtn';
-import { appendToGallery, clearGallery, createMarkup } from './js/render';
+
+import { refs } from './js/refs';
+import simpleLightbox from 'simplelightbox';
+import { clearImagesFromGallery, renderGalleryMarkup } from './js/render';
+import { Notify } from 'notiflix';
+import { LoadMoreBtn } from './js/loadMoreBtn';
+import { pixabayApiService } from './js/script';
 
 
 
 
-const apiService = new GetApi();
-const loadMoreBtn = new LoadBtn({
-  selector: '.load-more',
-  isHidden: true,
+refs.form.addEventListener('submit', onFormSubmit);
+refs.LoadMoreBtn.button.addEventListener('click', getImages);
+
+const lightbox = new simpleLightbox('.gallery', {
+  captionDelay: 250,
+  close: true,
 });
 
-export const refs = {
-  form: document.getElementById('search-form'),
-  gallery: document.querySelector('.gallery'),
-};
+export function onFormSubmit(event) {
+  event.preventDefault();
 
-refs.form.addEventListener('submit', onSubmit);
-loadMoreBtn.button.addEventListener('click', fetchData);
 
-function onSubmit(e) {
-  e.preventDefault();
+  const inputValue = event.target.elements.searchQuery.value.trim();
+  if (inputValue === '') {
+    Notify.info('Enter request');
+    return;
+  }
 
-  const form = e.currentTarget;
-  const value = form.elements.searchQuery.value.trim();
-  apiService.query = value;
-  clearGallery();
-  apiService.resetPage();
+  pixabayApiService.searchQuery = inputValue;
+  pixabayApiService.resetPage();
 
-  loadMoreBtn.show();
+  clearImagesFromGallery();
 
-  fetchData().finally(() => form.reset());
+  getCheckAndRender();
+
+  refs.form.reset();
 }
 
-function fetchData() {
-  loadMoreBtn.disable();
-  let currentHits = apiService.currentHits();
-  // console.log(currentHits);
+export async function onLoadMoreBtnClick() {
+  getCheckAndRender();
+}
 
-  return apiService
-    .getData()
-    .then(({ hits, totalHits }) => {
-      if (!hits.length) {
-        loadMoreBtn.hide();
-        Notify.failure(
-          'Sorry, there are no images matching your search query. Please try again.'
-        );
-        return;
-      }
+export async function getCheckAndRender() {
+  LoadMoreBtn.loading();
 
-      const markup = hits.reduce(
-        (markup, hit) => createMarkup(hit) + markup,
-        ''
+  try {
+    const { hits, totalHits } = await pixabayApiService.getImages();
+
+    if (!hits.length) {
+      LoadMoreBtn.hide();
+      clearImagesFromGallery();
+      Notify.failure(
+        'Sorry, there are no images matching your search query. Please try again.'
       );
-      appendToGallery(markup);
+      return;
+    }
 
-      if (currentHits >= totalHits) {
-        loadMoreBtn.hide();
-        Notify.info(
-          "We're sorry, but you've reached the end of search results."
-        );
-            return '';
-              }
+    renderGalleryMarkup(hits);
+    LoadMoreBtn.show();
+    if (refs.galleryBox.children.length === hits.length) {
+      Notify.info(`Hooray! We found ${totalHits} images.`);
+    }
 
-      loadMoreBtn.enable();
-    })
+    if (refs.galleryBox.children.length >= totalHits) {
+      LoadMoreBtn.hide();
+      Notify.warning(
+        `We're sorry, but you've reached the end of search results.`
+      );
+    }
 
-    .catch(console.log);
+    lightbox.refresh();
+    observer.observe(refs.observeElement);
+
+    LoadMoreBtn.endLoading();
+  } catch (error) {
+    console.error(error);
+  }
 }
 
+const options = {
+  root: null,
+  rootMargin: '400px',
+  threshold: 1.0,
+};
+const callback = function (entries, observer) {
+  entries.forEach(async entry => {
+    if (entry.isIntersecting) {
+      getCheckAndRender();
+    }
+  });
+};
+const observer = new IntersectionObserver(callback, options);
+
+export { observer };
