@@ -6,7 +6,7 @@ import { pixabayApiService } from './js/pixabayApiService';
 import { refs } from './js/refs';
 import { clearGallery, appendToGallery } from './js/renderMarkupFunction';
 
-// const { formEl, galleryEl, loadMoreBtn } = refs;
+
 
 let lightbox = new SimpleLightbox('.gallery a', {
   captionsData: 'alt',
