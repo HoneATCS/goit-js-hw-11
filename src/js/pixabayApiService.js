@@ -10,7 +10,7 @@ export default class PixabayApiService {
     this.searchQuery = '';
   }
 
-  async getImages() {
+  async fetchPhotos() {
     const searchParams = new URLSearchParams({
       image_type: 'photo',
       orientation: 'horizontal',
@@ -35,5 +35,3 @@ export default class PixabayApiService {
 }
 
 export const pixabayApiService = new PixabayApiService();
-
-

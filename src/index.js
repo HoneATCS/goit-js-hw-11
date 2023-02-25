@@ -1,95 +1,80 @@
-
-import { refs } from './js/refs';
-import simpleLightbox from 'simplelightbox';
-import { clearImagesFromGallery, renderGalleryMarkup } from './js/render';
 import { Notify } from 'notiflix';
-import { LoadMoreBtn } from './js/loadMoreBtn';
-import { pixabayApiService } from './js/script';
+import SimpleLightbox from 'simplelightbox';
+import 'simplelightbox/dist/simple-lightbox.min.css';
+import { loadMoreBtn } from './js/loadMoreBtn';
+import { pixabayApiService } from './js/pixabayApiService';
+import { refs } from './js/refs';
+import { clearGallery, appendToGallery } from './js/renderMarkupFunction';
 
+// const { formEl, galleryEl, loadMoreBtn } = refs;
 
-
-
-refs.form.addEventListener('submit', onFormSubmit);
-refs.LoadMoreBtn.button.addEventListener('click', getImages);
-
-const lightbox = new simpleLightbox('.gallery', {
-  captionDelay: 250,
-  close: true,
+let lightbox = new SimpleLightbox('.gallery a', {
+  captionsData: 'alt',
+  captionDelay: 100,
+  captionType: 'alt',
+  widthRatio: 0.8,
+  heightRatio: 0.9,
 });
 
-export function onFormSubmit(event) {
-  event.preventDefault();
+refs.formEl.addEventListener('submit', onFormSubmit);
+refs.loadMoreBtn.addEventListener('click', onLoadMoreBtnClick);
 
+function onFormSubmit(evt) {
+  evt.preventDefault();
+  loadMoreBtn.hide();
 
-  const inputValue = event.target.elements.searchQuery.value.trim();
+  const inputValue = evt.target.elements.searchQuery.value.trim();
   if (inputValue === '') {
-    Notify.info('Enter request');
+    Notify.failure('Please provide search data!');
     return;
   }
-
   pixabayApiService.searchQuery = inputValue;
   pixabayApiService.resetPage();
 
-  clearImagesFromGallery();
+  clearGallery();
 
-  getCheckAndRender();
+  processingReceivedImg();
 
-  refs.form.reset();
+  refs.formEl.reset();
 }
 
-export async function onLoadMoreBtnClick() {
-  getCheckAndRender();
+function onLoadMoreBtnClick() {
+  processingReceivedImg();
 }
 
-export async function getCheckAndRender() {
-  LoadMoreBtn.loading();
+async function processingReceivedImg() {
+  loadMoreBtn.loading();
 
   try {
-    const { hits, totalHits } = await pixabayApiService.getImages();
+    const { hits, totalHits } = await pixabayApiService.fetchPhotos();
 
-    if (!hits.length) {
-      LoadMoreBtn.hide();
-      clearImagesFromGallery();
+    if (hits.length === 0) {
+      loadMoreBtn.hide();
+      clearGallery();
       Notify.failure(
         'Sorry, there are no images matching your search query. Please try again.'
       );
       return;
     }
 
-    renderGalleryMarkup(hits);
-    LoadMoreBtn.show();
-    if (refs.galleryBox.children.length === hits.length) {
+    appendToGallery(hits);
+    loadMoreBtn.show();
+
+    if (refs.galleryEl.children.length === hits.length) {
       Notify.info(`Hooray! We found ${totalHits} images.`);
     }
 
-    if (refs.galleryBox.children.length >= totalHits) {
-      LoadMoreBtn.hide();
+    if (refs.galleryEl.children.length >= totalHits) {
+      loadMoreBtn.hide();
       Notify.warning(
         `We're sorry, but you've reached the end of search results.`
       );
     }
 
     lightbox.refresh();
-    observer.observe(refs.observeElement);
 
-    LoadMoreBtn.endLoading();
+    loadMoreBtn.endLoading();
   } catch (error) {
     console.error(error);
   }
 }
-
-const options = {
-  root: null,
-  rootMargin: '400px',
-  threshold: 1.0,
-};
-const callback = function (entries, observer) {
-  entries.forEach(async entry => {
-    if (entry.isIntersecting) {
-      getCheckAndRender();
-    }
-  });
-};
-const observer = new IntersectionObserver(callback, options);
-
-export { observer };

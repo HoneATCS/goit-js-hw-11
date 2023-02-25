@@ -66,3 +66,7 @@ button {
 button.hidden {
     display: none;
 }
+
+.load-more.is-hidden {
+    display: none;
+}

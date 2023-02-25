@@ -1,4 +1,3 @@
-
 export default class LoadMoreBtn {
   constructor({ selector, isHidden }) {
     this.button = document.querySelector(selector);
@@ -7,10 +6,10 @@ export default class LoadMoreBtn {
   }
 
   hide() {
-    this.button.classList.add('hidden');
+    this.button.classList.add('is-hidden');
   }
   show() {
-    this.button.classList.remove('hidden');
+    this.button.classList.remove('is-hidden');
   }
   loading() {
     this.button.disabled = true;
@@ -23,6 +22,7 @@ export default class LoadMoreBtn {
 }
 
 export const loadMoreBtn = new LoadMoreBtn({
-  selector: '#loadMore',
+  selector: '.load-more',
   isHidden: true,
 });
+
