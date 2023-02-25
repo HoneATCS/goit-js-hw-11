@@ -14,7 +14,7 @@ export function createMarkup(images) {
       }) =>
         `<div class="photo-card">
           <a href="${largeImageURL}">
-            <img src="${webformatURL}" alt="${tags}" loading="lazy" width="400px" height="270px" />
+            <img src="${webformatURL}" alt="${tags}" loading="lazy" width="400px" height="400px" />
           </a>
           <div class="info">
             <p class="info-item">
