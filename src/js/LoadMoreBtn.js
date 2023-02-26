@@ -1,4 +1,4 @@
-export default class LoadMoreBtn {
+export class LoadMoreBtn {
   constructor({ selector, isHidden }) {
     this.button = document.querySelector(selector);
     if (isHidden) this.hide();
