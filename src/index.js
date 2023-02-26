@@ -7,7 +7,6 @@ import { refs } from './js/refs';
 import { clearGallery, appendToGallery } from './js/renderMarkupFunction';
 
 
-
 let lightbox = new SimpleLightbox('.gallery a', {
   captionsData: 'alt',
   captionDelay: 100,
@@ -17,7 +16,7 @@ let lightbox = new SimpleLightbox('.gallery a', {
 });
 
 refs.formEl.addEventListener('submit', onFormSubmit);
-refs.loadMoreBtn.addEventListener('click', onLoadMoreBtnClick);
+refs.loadMoreBtn.button.addEventListener('click', onLoadMoreBtnClick);
 
 function onFormSubmit(evt) {
   evt.preventDefault();

@@ -24,5 +24,5 @@ export default class LoadMoreBtn {
 export const loadMoreBtn = new LoadMoreBtn({
   selector: '.load-more',
   isHidden: true,
-})
+});
 

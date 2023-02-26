@@ -67,10 +67,6 @@ button.hidden {
     display: none;
 }
 
-.load-more.is-hidden {
-    display: none;
-}
-
 .info {
     display: flex;
     justify-content: space-evenly;
@@ -93,7 +89,6 @@ button.hidden {
     color: #684f9f;
     cursor: pointer;
 }
-
 .load-more.is-hidden {
     display: none;
 }
