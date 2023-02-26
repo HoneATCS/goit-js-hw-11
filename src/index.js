@@ -1,7 +1,7 @@
 import { Notify } from 'notiflix';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
-import { loadMoreBtn } from './js/loadMoreBtn';
+import LoadMoreBtn from "./js/loadMoreBtn";
 import { pixabayApiService } from './js/pixabayApiService';
 import { refs } from './js/refs';
 import { clearGallery, appendToGallery } from './js/renderMarkupFunction';
@@ -16,7 +16,7 @@ let lightbox = new SimpleLightbox('.gallery a', {
 });
 
 refs.formEl.addEventListener('submit', onFormSubmit);
-refs.loadMoreBtn.button.addEventListener('click', onLoadMoreBtnClick);
+refs.loadMoreBtn.addEventListener('click', onLoadMoreBtnClick);
 
 function onFormSubmit(evt) {
   evt.preventDefault();
