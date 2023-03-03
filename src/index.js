@@ -1,7 +1,7 @@
 import { Notify } from 'notiflix';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
-import { LoadMoreBtn, loadMoreBtn } from "./js/LoadMoreBtn";
+import { LoadMoreBtn, loadMoreBtn } from './js/LoadMoreBtn';
 import { pixabayApiService } from './js/pixabayApiService';
 import { refs } from './js/refs';
 import { clearGallery, appendToGallery } from './js/renderMarkupFunction';
